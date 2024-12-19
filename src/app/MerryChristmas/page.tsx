@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { MerryChristmasConfig } from "~/config/config";
 
 // Define the ApiResponse type
 type ApiResponse = {
@@ -21,7 +22,7 @@ export default function MerryChristmasPage() {
         if (newScore !== score) {
           setScore(newScore);
           
-          if (newScore >= 100 && !clueReceived) {
+          if (newScore >= MerryChristmasConfig.requiredScore && !clueReceived) {
             try {
               const response = await fetch('/api/verify-score', {
                 method: 'POST',
@@ -51,12 +52,12 @@ export default function MerryChristmasPage() {
 
   return (
     <div className="flex flex-col items-center w-full relative">
-      <h2 className="text-2xl font-bold my-4">Reach 1000!</h2>
+      <h2 className="text-2xl font-bold my-4">Reach {MerryChristmasConfig.requiredScore}!</h2>
       
       <iframe 
         src="/dino-game/index.html"
         className="w-full"
-        style={{ height: "calc(15vh)" }}
+        style={{ height: "calc(25vh)" }}
         scrolling="no"
       />
       
