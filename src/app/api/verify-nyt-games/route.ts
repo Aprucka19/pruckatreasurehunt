@@ -1,15 +1,20 @@
 import { NextResponse } from "next/server";
 import { AstridAndOrionConfig } from "~/config/config";
 
+type RequestBody = {
+  wordle: string;
+  purpleGroup: string;
+  strandsTheme: string;
+};
+
 export async function POST(request: Request) {
   try {
-    const { wordle, purpleGroup, strandsTheme } = await request.json();
+    const { wordle, purpleGroup, strandsTheme } = await request.json() as RequestBody;
 
     const { correctWordle, correctPurpleGroup, correctStrandsTheme, clue } = AstridAndOrionConfig;
 
     const errors: string[] = [];
 
-    // Convert both user input and correct answers to lowercase for comparison
     if (wordle.toLowerCase() !== correctWordle.toLowerCase()) {
       errors.push("Wordle word");
     }
@@ -22,12 +27,10 @@ export async function POST(request: Request) {
 
     let message;
     if (errors.length === 0) {
-      // All correct
       message = clue;
     } else if (errors.length === 1) {
       message = `${errors[0]} is incorrect.`;
     } else {
-      // Combine errors into a single string
       const lastError = errors.pop();
       message = `${errors.join(", ")} and ${lastError} are incorrect.`;
     }

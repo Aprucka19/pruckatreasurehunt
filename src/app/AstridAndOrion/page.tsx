@@ -23,7 +23,7 @@ export default function HomePage() {
         }),
       });
 
-      const data = await response.json();
+      const data: { message: string } = await response.json();
       setResponseMessage(data.message);
     } catch (error) {
       console.error("Error verifying answers:", error);

@@ -2,6 +2,7 @@ import "~/styles/globals.css";
 
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
+import Image from 'next/image';
 
 export const metadata: Metadata = {
   title: "Prucka Treasure Hunt 2024",
@@ -17,9 +18,9 @@ export default function RootLayout({
       <body className="theme-background">
         <div className="w-full">
           <div className="container mx-auto py-4 flex items-center justify-center">
-            <img src="/favicon.ico" alt="Icon" className="w-6 h-6 mr-2" />
+            <Image src="/favicon.ico" alt="Icon" width={24} height={24} className="w-6 h-6 mr-2" />
             <h1 className="text-center text-2xl font-bold">Prucka Treasure Hunt</h1>
-            <img src="/favicon.ico" alt="Icon" className="w-6 h-6 ml-2" />
+            <Image src="/favicon.ico" alt="Icon" width={24} height={24} className="w-6 h-6 ml-2" />
           </div>
         </div>
         {children}

@@ -7,5 +7,5 @@ export const AstridAndOrionConfig = {
   correctWordle: "STRAY",
   correctPurpleGroup: "SEEN IN \"DONKEY KONG\"",
   correctStrandsTheme: "Roll with it",
-  clue: "Congratulations! You've unlocked the next clue: [Your Clue Here]",
+  clue: "Nice! Your next clue is in xyz location",
 }; 
