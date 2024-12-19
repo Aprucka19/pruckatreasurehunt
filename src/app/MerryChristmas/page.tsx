@@ -2,13 +2,25 @@
 
 import { useEffect, useState } from "react";
 
+// Define the ApiResponse type
+type ApiResponse = {
+  message: string;
+};
+
+// Define the ScoreMessageEvent type
+type ScoreMessageEvent = MessageEvent & {
+  data: {
+    score?: number;
+  };
+};
+
 export default function MerryChristmasPage() {
   const [score, setScore] = useState(0);
   const [clueMessage, setClueMessage] = useState<string | null>(null);
   const [clueReceived, setClueReceived] = useState(false);
 
   useEffect(() => {
-    const handleMessage = async (event: MessageEvent) => {
+    const handleMessage = async (event: ScoreMessageEvent) => {
       if (event.data?.score !== undefined) {
         const newScore = Number(event.data.score);
         
@@ -26,7 +38,7 @@ export default function MerryChristmasPage() {
               });
               
               if (response.ok) {
-                const data = await response.json();
+                const data: ApiResponse = await response.json();
                 setClueMessage(data.message);
                 setClueReceived(true);
               }
@@ -38,8 +50,8 @@ export default function MerryChristmasPage() {
       }
     };
   
-    window.addEventListener("message", handleMessage);
-    return () => window.removeEventListener("message", handleMessage);
+    window.addEventListener("message", handleMessage as unknown as EventListener);
+    return () => window.removeEventListener("message", handleMessage as unknown as EventListener);
   }, [score, clueReceived]);
   
 
