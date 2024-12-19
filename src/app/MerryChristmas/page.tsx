@@ -20,9 +20,10 @@ export default function MerryChristmasPage() {
   const [clueReceived, setClueReceived] = useState(false);
 
   useEffect(() => {
-    const handleMessage = async (event: ScoreMessageEvent) => {
-      if (event.data?.score !== undefined) {
-        const newScore = Number(event.data.score);
+    const handleMessage = async (event: MessageEvent) => {
+      const eventData = event.data as { score?: number };
+      if (eventData?.score !== undefined) {
+        const newScore = Number(eventData.score);
         
         if (newScore !== score) {
           setScore(newScore);

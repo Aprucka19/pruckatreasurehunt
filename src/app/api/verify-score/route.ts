@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 
 export async function POST(request: Request) {
   try {
-    const { score } = await request.json();
+    const body = await request.json() as { score: number };
+    const { score } = body;
     
     // Verify the score is legitimate
     if (score >= 100) {
@@ -13,7 +14,7 @@ export async function POST(request: Request) {
     
     return NextResponse.json({ error: 'Score not high enough' }, { status: 400 });
     
-  } catch (error) {
+  } catch {
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 } 
