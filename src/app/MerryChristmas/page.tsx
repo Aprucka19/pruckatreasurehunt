@@ -7,13 +7,6 @@ type ApiResponse = {
   message: string;
 };
 
-// Define the ScoreMessageEvent type
-type ScoreMessageEvent = MessageEvent & {
-  data: {
-    score?: number;
-  };
-};
-
 export default function MerryChristmasPage() {
   const [score, setScore] = useState(0);
   const [clueMessage, setClueMessage] = useState<string | null>(null);
@@ -39,7 +32,7 @@ export default function MerryChristmasPage() {
               });
               
               if (response.ok) {
-                const data: ApiResponse = await response.json();
+                const data: ApiResponse = await response.json() as ApiResponse;
                 setClueMessage(data.message);
                 setClueReceived(true);
               }
