@@ -56,12 +56,12 @@ export default function MerryChristmasPage() {
       <iframe 
         src="/dino-game/index.html"
         className="w-full"
-        style={{ height: "calc(100vh - 250px)" }}
+        style={{ height: "calc(50vh)" }}
         scrolling="no"
       />
       
       {clueMessage && (
-        <div className="mt-8 text-center p-6 bg-white rounded-lg shadow-lg w-full max-w-2xl">
+        <div className="mt-4 text-center p-6 bg-white rounded-lg shadow-lg w-full max-w-2xl">
           <p className="text-2xl font-semibold">{clueMessage}</p>
         </div>
       )}
