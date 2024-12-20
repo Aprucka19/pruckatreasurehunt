@@ -251,40 +251,50 @@ export default function ParagonPage() {
   return (
     <div className="flex flex-col items-center relative">
       <h1 className="text-2xl font-bold mb-4">Minesweeper</h1>
+
+      {/* Only this wrapper is added for panning and zooming */}
       <div 
-        className="grid" 
         style={{ 
-          gridTemplateColumns: `repeat(${gridSize}, 1fr)`,
-          touchAction: "none" // to prevent some default behaviors on touch
+          overflow: "auto",
+          touchAction: "pan-x pan-y pinch-zoom"
         }}
       >
-        {grid.map((row, rowIndex) =>
-          row.map((cell, colIndex) => {
-            let display = "";
-            if (cell.isRevealed) {
-              display = cell.isBomb ? "💣" : (cell.adjacentBombs || "").toString();
-            } else {
-              if (cell.mark === "flag") display = "🚩";
-              else if (cell.mark === "question") display = "?";
-            }
+        <div 
+          className="grid" 
+          style={{ 
+            gridTemplateColumns: `repeat(${gridSize}, 1fr)`
+            // Removed touchAction: "none" from here
+          }}
+        >
+          {grid.map((row, rowIndex) =>
+            row.map((cell, colIndex) => {
+              let display = "";
+              if (cell.isRevealed) {
+                display = cell.isBomb ? "💣" : (cell.adjacentBombs || "").toString();
+              } else {
+                if (cell.mark === "flag") display = "🚩";
+                else if (cell.mark === "question") display = "?";
+              }
 
-            return (
-              <button
-                key={`${rowIndex}-${colIndex}`}
-                onClick={() => revealCell(rowIndex, colIndex)}
-                onContextMenu={(e) => handleRightClick(e, rowIndex, colIndex)}
-                onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
-                onTouchEnd={() => handleTouchEnd()}
-                className={`w-10 h-10 border flex items-center justify-center ${
-                  cell.isRevealed ? "bg-gray-300" : "bg-gray-500"
-                }`}
-              >
-                {display}
-              </button>
-            );
-          })
-        )}
+              return (
+                <button
+                  key={`${rowIndex}-${colIndex}`}
+                  onClick={() => revealCell(rowIndex, colIndex)}
+                  onContextMenu={(e) => handleRightClick(e, rowIndex, colIndex)}
+                  onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
+                  onTouchEnd={() => handleTouchEnd()}
+                  className={`w-10 h-10 border flex items-center justify-center ${
+                    cell.isRevealed ? "bg-gray-300" : "bg-gray-500"
+                  }`}
+                >
+                  {display}
+                </button>
+              );
+            })
+          )}
+        </div>
       </div>
+
       {gameOver && <p className="text-red-500 mt-4">Game Over!</p>}
       {gameWon && <p className="text-green-500 mt-4">You Won!</p>}
       {(gameOver || gameWon) && (
@@ -301,7 +311,6 @@ export default function ParagonPage() {
         </div>
       )}
 
-      {/* Popup menu for mobile long press */}
       {selectedCellForMarking && (
         <div 
           className="absolute bg-white border rounded shadow p-2"
