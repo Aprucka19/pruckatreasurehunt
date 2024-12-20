@@ -46,9 +46,23 @@ export default function ParagonPage() {
 
   const [selectedCellForMarking, setSelectedCellForMarking] = useState<{x: number; y: number; top: number; left: number} | null>(null);
 
-  // Long press detection
   const longPressTimeout = useRef<NodeJS.Timeout | null>(null);
   const [touchStartInfo, setTouchStartInfo] = useState<{row: number, col: number, clientX: number, clientY: number} | null>(null);
+
+  // We will compute cellSize based on device screen
+  const [cellSize, setCellSize] = useState<number>(40); // default to 40px until computed
+
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const initializeGrid = useCallback(() => {
     const newGrid: Cell[][] = Array.from({ length: gridSize }, () =>
@@ -90,6 +104,23 @@ export default function ParagonPage() {
     initializeGrid();
   }, [initializeGrid]);
 
+  // Compute cellSize after the component mounts (in browser)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const margin = 32; // reduced margin
+      const maxCellSize = 40;
+
+      const widthAvailable = Math.min(window.innerWidth - margin, 600); // Added max width limit
+      const heightAvailable = Math.min(window.innerHeight - margin, 600); // Added max height limit
+
+      const sizeBasedOnWidth = widthAvailable / gridSize;
+      const sizeBasedOnHeight = heightAvailable / gridSize;
+
+      const computedCellSize = Math.min(sizeBasedOnWidth, sizeBasedOnHeight, maxCellSize);
+      setCellSize(computedCellSize > 0 ? computedCellSize : 5);
+    }
+  }, [gridSize]);
+
   const revealCell = (row: number, col: number) => {
     if (
       gameOver || 
@@ -103,7 +134,6 @@ export default function ParagonPage() {
     if (cell) {
       cell.isRevealed = true;
       if (cell.isBomb) {
-        // Hit a bomb
         setGameOver(true);
         setGrid(newGrid);
         return;
@@ -186,7 +216,6 @@ export default function ParagonPage() {
     initializeGrid();
   };
 
-  // Handle mark cycling on desktop (right-click)
   const handleRightClick = (e: React.MouseEvent, row: number, col: number) => {
     e.preventDefault();
     if (
@@ -200,7 +229,6 @@ export default function ParagonPage() {
     const newGrid = grid.map(r => r.map(c => ({ ...c })));
     const cell = newGrid[row]?.[col];
     if (cell) {
-      // Cycle through the mark states: none -> flag -> question -> none
       if (cell.mark === "none") {
         cell.mark = "flag";
       } else if (cell.mark === "flag") {
@@ -213,16 +241,14 @@ export default function ParagonPage() {
     setGrid(newGrid);
   };
 
-  // Mobile long press
   const handleTouchStart = (e: React.TouchEvent, row: number, col: number) => {
     if (gameOver || gameWon || !grid[row]?.[col]?.isRevealed) return;
     const touch = e.touches[0];
     if (touch) {
       setTouchStartInfo({row, col, clientX: touch.clientX, clientY: touch.clientY});
       longPressTimeout.current = setTimeout(() => {
-        // Long press detected
         setSelectedCellForMarking({x: col, y: row, top: touch.clientY, left: touch.clientX});
-      }, 500); // 500ms long press threshold
+      }, 500);
     }
   };
 
@@ -234,7 +260,6 @@ export default function ParagonPage() {
     setTouchStartInfo(null);
   };
 
-  // Setting the mark from the popup menu
   const setMarkFromPopup = (mark: MarkState) => {
     if (selectedCellForMarking) {
       const { y, x } = selectedCellForMarking;
@@ -249,21 +274,31 @@ export default function ParagonPage() {
   };
 
   return (
-    <div className="flex flex-col items-center relative">
-      <h1 className="text-2xl font-bold mb-4">Minesweeper</h1>
-
-      {/* Only this wrapper is added for panning and zooming */}
+    <div className="flex flex-col items-center relative p-2">
+      <h1 className="text-2xl font-bold mb-2">Minesweeper</h1>
+      
+      <p className="text-sm text-gray-600 mb-2">
+        {isMobile ? (
+          "Press and hold to toggle between blank, 🚩, and ?"
+        ) : (
+          "Right click to toggle between blank, 🚩, and ?"
+        )}
+      </p>
+      
       <div 
         style={{ 
-          overflow: "auto",
-          touchAction: "pan-x pan-y pinch-zoom"
+          width: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          touchAction: "pan-x pan-y pinch-zoom",
+          margin: "8px 0"
         }}
       >
         <div 
           className="grid" 
           style={{ 
             gridTemplateColumns: `repeat(${gridSize}, 1fr)`
-            // Removed touchAction: "none" from here
           }}
         >
           {grid.map((row, rowIndex) =>
@@ -283,7 +318,12 @@ export default function ParagonPage() {
                   onContextMenu={(e) => handleRightClick(e, rowIndex, colIndex)}
                   onTouchStart={(e) => handleTouchStart(e, rowIndex, colIndex)}
                   onTouchEnd={() => handleTouchEnd()}
-                  className={`w-10 h-10 border flex items-center justify-center ${
+                  style={{
+                    width: `${cellSize}px`,
+                    height: `${cellSize}px`,
+                    fontSize: `${cellSize * 0.5}px`, // Scale font size with cell size
+                  }}
+                  className={`border flex items-center justify-center ${
                     cell.isRevealed ? "bg-gray-300" : "bg-gray-500"
                   }`}
                 >
@@ -295,18 +335,18 @@ export default function ParagonPage() {
         </div>
       </div>
 
-      {gameOver && <p className="text-red-500 mt-4">Game Over!</p>}
-      {gameWon && <p className="text-green-500 mt-4">You Won!</p>}
+      {gameOver && <p className="text-red-500 mt-2">Game Over!</p>}
+      {gameWon && <p className="text-green-500 mt-2">You Won!</p>}
       {(gameOver || gameWon) && (
         <button
           onClick={handleReplay}
-          className="mt-4 bg-blue-500 text-white p-2 rounded"
+          className="mt-2 bg-blue-500 text-white p-2 rounded"
         >
           Play Again
         </button>
       )}
       {clueMessage && (
-        <div className="mt-4 text-center p-6 bg-white rounded-lg shadow-lg w-full max-w-2xl">
+        <div className="mt-2 text-center p-4 bg-white rounded-lg shadow-lg w-full max-w-2xl">
           <p className="text-2xl font-semibold">{clueMessage}</p>
         </div>
       )}
