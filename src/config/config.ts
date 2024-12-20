@@ -1,5 +1,5 @@
 export const MerryChristmasConfig = {
-    requiredScore: 300,
+    requiredScore: 1000,
     clue: "Find your next clue at the top of stargazer!",
   };
   
@@ -12,8 +12,8 @@ export const AstridAndOrionConfig = {
 
 export const ParagonConfig = {
     minesweeper: {
-      gridSize: 10, // Default grid size
-      numberOfBombs: 8, // Default number of bombs
+      gridSize: 22, // Default grid size
+      numberOfBombs: 99, // Default number of bombs
     },
     clue: "You've conquered the mines! Your next clue is in the xyz location.",
   };
