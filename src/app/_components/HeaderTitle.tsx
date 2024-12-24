@@ -55,6 +55,7 @@ export function HeaderTitle() {
                 <Link href="/Hapland" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hapland</Link>
                 <Link href="/NeoIsTheOne" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">NeoIsTheOne</Link>
                 <Link href="/ElectricHigh" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ElectricHigh</Link>
+                <Link href="/SkiPatrol" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">SkiPatrol</Link>
               </div>
             </div>
           </div>

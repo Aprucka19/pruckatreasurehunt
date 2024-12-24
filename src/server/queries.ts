@@ -38,7 +38,11 @@ export async function initializeConfig() {
       {
         section: "HangmanConfig",
         config: config.HangmanConfig,
-      }
+      },
+      {
+        section: "SudokuConfig",
+        config: config.SudokuConfig,
+      },
     ].filter(cfg => !existingSections.has(cfg.section));
 
     if (configsToInsert.length > 0) {
@@ -122,6 +126,14 @@ export async function getHangmanConfig() {
   const config = await getConfigBySection("HangmanConfig") as typeof import("~/config/config").config.HangmanConfig;
   if (!config.words || !config.maxWrongGuesses || !config.clue || !config.requiredWins) {
     throw new Error("Hangman configuration is missing required fields");
+  }
+  return config;
+}
+
+export async function getSudokuConfig() {
+  const config = await getConfigBySection("SudokuConfig") as typeof import("~/config/config").config.SudokuConfig;
+  if (!config.clue) {
+    throw new Error("Sudoku configuration is missing required fields");
   }
   return config;
 }

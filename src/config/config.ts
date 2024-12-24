@@ -64,4 +64,7 @@ export const config = {
     requiredWins: 3,
     clue: "The next clue awaits in the electric heights.",
   },
+  SudokuConfig: {
+    clue: "Well done! Your next clue awaits in the ski patrol station.",
+  },
 };
