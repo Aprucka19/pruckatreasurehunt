@@ -36,9 +36,12 @@ export default function GameHangmanPage() {
       const availableWords = words.filter(
         (word) => !completedWords.has(word.toUpperCase())
       );
-      if (availableWords.length === 0) return words[0]; // Early return if all words are completed
+      if (availableWords.length === 0) {
+        if (words.length === 0) throw new Error("No words provided");
+        return words[0]!;
+      }
       const idx = Math.floor(Math.random() * availableWords.length);
-      return availableWords[idx];
+      return availableWords[idx]!;
     },
     [completedWords]
   );
