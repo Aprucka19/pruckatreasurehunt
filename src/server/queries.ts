@@ -35,6 +35,10 @@ export async function initializeConfig() {
         section: "CrosswordConfig",
         config: config.CrosswordConfig,
       },
+      {
+        section: "HangmanConfig",
+        config: config.HangmanConfig,
+      }
     ].filter(cfg => !existingSections.has(cfg.section));
 
     if (configsToInsert.length > 0) {
@@ -110,6 +114,14 @@ export async function getCrosswordConfig() {
   const config = await getConfigBySection("CrosswordConfig") as typeof import("~/config/config").config.CrosswordConfig;
   if (!config.answer || !config.clue) {
     throw new Error("Crossword configuration is missing required fields");
+  }
+  return config;
+}
+
+export async function getHangmanConfig() {
+  const config = await getConfigBySection("HangmanConfig") as typeof import("~/config/config").config.HangmanConfig;
+  if (!config.words || !config.maxWrongGuesses || !config.clue || !config.requiredWins) {
+    throw new Error("Hangman configuration is missing required fields");
   }
   return config;
 }
