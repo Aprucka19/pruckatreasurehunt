@@ -18,7 +18,6 @@ type VerifyResponse = {
 
 export default function Game2048Page() {
   const [config, setConfig] = useState<Config2048 | null>(null);
-
   const [grid, setGrid] = useState<Tile[][]>([]);
   const [score, setScore] = useState(0);
   const [clueMessage, setClueMessage] = useState<string | null>(null);
@@ -84,49 +83,9 @@ export default function Game2048Page() {
   }, [grid, config, clueReceived]);
 
   /**
-   * 5. Swipe event handling
+   * 5. Swipe event handling moved to grid container
+   * Removed the useEffect that adds touch events to the document
    */
-  useEffect(() => {
-    if (!config || clueReceived) return;
-
-    function handleTouchStart(e: TouchEvent) {
-      if (!e.touches[0]) return;
-      touchStartX.current = e.touches[0].clientX;
-      touchStartY.current = e.touches[0].clientY;
-    }
-
-    function handleTouchEnd(e: TouchEvent) {
-      if (!e.changedTouches[0]) return;
-      const deltaX = e.changedTouches[0].clientX - touchStartX.current;
-      const deltaY = e.changedTouches[0].clientY - touchStartY.current;
-
-      const absX = Math.abs(deltaX);
-      const absY = Math.abs(deltaY);
-      const minSwipeDistance = 30;
-
-      if (absX > absY) {
-        // horizontal swipe
-        if (absX > minSwipeDistance) {
-          if (deltaX > 0) doMove("right");
-          else doMove("left");
-        }
-      } else {
-        // vertical swipe
-        if (absY > minSwipeDistance) {
-          if (deltaY > 0) doMove("down");
-          else doMove("up");
-        }
-      }
-    }
-
-    document.addEventListener("touchstart", handleTouchStart, { passive: false });
-    document.addEventListener("touchend", handleTouchEnd, { passive: false });
-
-    return () => {
-      document.removeEventListener("touchstart", handleTouchStart);
-      document.removeEventListener("touchend", handleTouchEnd);
-    };
-  }, [grid, config, clueReceived]);
 
   /**
    * 6. doMove(direction): merges & spawns new tile if grid changed, 
@@ -195,53 +154,92 @@ export default function Game2048Page() {
     }
   }
 
+  // Define touch event handlers
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (!e.touches[0]) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    if (!e.changedTouches[0]) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    const deltaY = e.changedTouches[0].clientY - touchStartY.current;
+
+    const absX = Math.abs(deltaX);
+    const absY = Math.abs(deltaY);
+    const minSwipeDistance = 30;
+
+    if (absX > absY) {
+      // horizontal swipe
+      if (absX > minSwipeDistance) {
+        if (deltaX > 0) doMove("right");
+        else doMove("left");
+      }
+    } else {
+      // vertical swipe
+      if (absY > minSwipeDistance) {
+        if (deltaY > 0) doMove("down");
+        else doMove("up");
+      }
+    }
+  };
+
   if (!config) {
     return <div>Loading 2048 Config...</div>;
   }
 
   return (
-    <div className="flex flex-col items-center p-4">
-      <h1 className="text-2xl font-bold mb-2">
-        {score}/{config.targetScore}
-      </h1>
+    <div className="flex flex-col items-center">
+      <div className="w-fit flex flex-col items-center p-4 bg-white rounded-lg shadow-md m-4">
+        <h1 className="text-2xl font-bold mb-2">
+          {score}/{config.targetScore}
+        </h1>
 
-      <button
-        onClick={initGame}
-        className="mb-4 bg-blue-500 text-white px-3 py-1 rounded"
-      >
-        Reset Game
-      </button>
+        <button
+          onClick={initGame}
+          className="mb-4 bg-blue-500 text-white px-3 py-1 rounded"
+        >
+          Reset Game
+        </button>
 
-      <div className="inline-block">
-        {grid.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex">
-            {row.map((tile, colIndex) => {
-              const color = getTileColor(tile.value);
-              return (
-                <div
-                  key={tile.id}
-                  className="m-1 flex items-center justify-center"
-                  style={{
-                    width: "60px",
-                    height: "60px",
-                    fontSize: "24px",
-                    fontWeight: 600,
-                    backgroundColor: color,
-                  }}
-                >
-                  {tile.value > 0 ? tile.value : ""}
-                </div>
-              );
-            })}
-          </div>
-        ))}
-      </div>
-
-      {clueMessage && (
-        <div className="mt-4 p-4 bg-white text-center shadow rounded">
-          <p className="text-xl font-semibold">{clueMessage}</p>
+        {/* Grid Container with Touch Event Handlers */}
+        <div
+          className="inline-block"
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
+          style={{ touchAction: "none" }}
+        >
+          {grid.map((row, rowIndex) => (
+            <div key={rowIndex} className="flex">
+              {row.map((tile, colIndex) => {
+                const color = getTileColor(tile.value);
+                return (
+                  <div
+                    key={tile.id}
+                    className="m-1 flex items-center justify-center"
+                    style={{
+                      width: "60px",
+                      height: "60px",
+                      fontSize: "24px",
+                      fontWeight: 600,
+                      backgroundColor: color,
+                    }}
+                  >
+                    {tile.value > 0 ? tile.value : ""}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
         </div>
-      )}
+
+        {clueMessage && (
+          <div className="mt-4 p-4 bg-gray-50 text-center rounded">
+            <p className="text-xl font-semibold">{clueMessage}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

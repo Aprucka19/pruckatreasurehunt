@@ -41,7 +41,7 @@ export default function CrosswordPage() {
         Enter the first letter of each word of the crossword, in order from 1 to 14
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-2 flex flex-col items-center space-y-2 w-96">
+      <form onSubmit={handleSubmit} className="mt-2 flex flex-col items-center space-y-2 w-66">
         <input
           type="text"
           value={answer}
