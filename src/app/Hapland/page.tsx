@@ -135,25 +135,25 @@ export default function Game2048Page() {
   function doMove(direction: "left" | "right" | "up" | "down") {
     if (!config || clueReceived) return;
 
-    let movedGrid: Tile[][];
+    let movedGrid: Tile[][] = grid; // fallback
     switch (direction) {
       case "left": {
-        const [g, _] = moveLeft(grid);
+        const [g] = moveLeft(grid);
         movedGrid = g;
         break;
       }
       case "right": {
-        const [g, _] = moveRight(grid);
+        const [g] = moveRight(grid);
         movedGrid = g;
         break;
       }
       case "up": {
-        const [g, _] = moveUp(grid);
+        const [g] = moveUp(grid);
         movedGrid = g;
         break;
       }
       case "down": {
-        const [g, _] = moveDown(grid);
+        const [g] = moveDown(grid);
         movedGrid = g;
         break;
       }
@@ -247,13 +247,7 @@ export default function Game2048Page() {
 }
 
 /* ------------------------------------------------------------------
-   Helper functions
-   - Creating/initializing grid
-   - Checking if grid changed
-   - Summing tile values => for new "score" definition
-   - Spawning random tile
-   - Merging logic (moveLeft, moveRight, etc.)
-   - Tile colors
+   Helper functions (adjusted to avoid potential undefined)
  ------------------------------------------------------------------ */
 
 function createEmptyGrid(): Tile[][] {
@@ -271,47 +265,43 @@ function createEmptyGrid(): Tile[][] {
   return grid;
 }
 
-/**
- * Spawn random tile (2 or 4) into an empty cell
- */
 function spawnRandomTile(grid: Tile[][]) {
   const emptyCells: { r: number; c: number }[] = [];
   for (let r = 0; r < 4; r++) {
     for (let c = 0; c < 4; c++) {
-      if (grid[r][c].value === 0) {
+      if (grid[r]?.[c]?.value === 0) {
         emptyCells.push({ r, c });
       }
     }
   }
+
   if (emptyCells.length === 0) return;
 
   const idx = Math.floor(Math.random() * emptyCells.length);
-  const { r, c } = emptyCells[idx];
-  grid[r][c].value = Math.random() < 0.9 ? 2 : 4;
-  grid[r][c].id = `r${r}c${c}-${Math.random()}`;
+  const cell = emptyCells[idx];
+  if (!cell || !grid[cell.r]?.[cell.c]) return;
+  
+  grid[cell.r]![cell.c]! = {
+    id: `r${cell.r}c${cell.c}-${Math.random()}`,
+    value: Math.random() < 0.9 ? 2 : 4,
+  };
 }
 
-/**
- * Calculate total sum of tile values
- * This is the new "score" definition
- */
 function calculateBoardSum(grid: Tile[][]): number {
   let sum = 0;
   for (let r = 0; r < 4; r++) {
     for (let c = 0; c < 4; c++) {
-      sum += grid[r][c].value;
+      // Safely check
+      sum += grid[r]?.[c]?.value ?? 0;
     }
   }
   return sum;
 }
 
-/**
- * Compare two 4x4 grids to see if anything changed
- */
 function gridChanged(oldG: Tile[][], newG: Tile[][]): boolean {
   for (let r = 0; r < 4; r++) {
     for (let c = 0; c < 4; c++) {
-      if (oldG[r][c].value !== newG[r][c].value) {
+      if ((oldG[r]?.[c]?.value ?? 0) !== (newG[r]?.[c]?.value ?? 0)) {
         return true;
       }
     }
@@ -319,29 +309,27 @@ function gridChanged(oldG: Tile[][], newG: Tile[][]): boolean {
   return false;
 }
 
-/**
- * Move left => compress, merge, etc.
- * Returns [newGrid, scoreGainedThisMove]
- *
- * However, since total "score" is sum of all tiles, we only
- * need "scoreGainedThisMove" if we want to show merges. But we won't use it now.
- * We'll recalc the entire board sum after the move.
- */
 function moveLeft(grid: Tile[][]): [Tile[][], number] {
   let scoreGained = 0;
 
-  // Copy
-  const newGrid = grid.map((row) => row.map((tile) => ({ ...tile })));
+  // Copy safely
+  const newGrid: Tile[][] = grid.map((row) =>
+    row.map((tile) => ({ ...tile }))
+  );
 
   for (let r = 0; r < 4; r++) {
     // Extract row values
-    let rowValues = newGrid[r].map((t) => t.value).filter((val) => val !== 0);
+    const rowValues = (newGrid[r] ?? [])
+      .map((t) => t?.value ?? 0)
+      .filter((val) => val !== 0);
 
     // Merge
     for (let i = 0; i < rowValues.length - 1; i++) {
-      if (rowValues[i] === rowValues[i + 1]) {
-        rowValues[i] *= 2;
-        scoreGained += rowValues[i];
+      const currentValue = rowValues[i];
+      const nextValue = rowValues[i + 1];
+      if (currentValue && nextValue && currentValue === nextValue) {
+        rowValues[i] = currentValue * 2;
+        scoreGained += rowValues[i]!; // non-null assertion is safe here
         rowValues.splice(i + 1, 1);
         i++;
       }
@@ -354,16 +342,15 @@ function moveLeft(grid: Tile[][]): [Tile[][], number] {
 
     // Reassign row
     for (let c = 0; c < 4; c++) {
-      newGrid[r][c].value = rowValues[c];
+      if (newGrid[r]?.[c]) {
+        newGrid[r]![c]!.value = rowValues[c] ?? 0;
+      }
     }
   }
 
   return [newGrid, scoreGained];
 }
 
-/**
- * Move Right => rotate 2x, moveLeft, rotate 2x
- */
 function moveRight(grid: Tile[][]): [Tile[][], number] {
   const rotated1 = rotateGrid(grid);
   const rotated2 = rotateGrid(rotated1);
@@ -373,9 +360,6 @@ function moveRight(grid: Tile[][]): [Tile[][], number] {
   return [unRotated2, score];
 }
 
-/**
- * Move Up => rotate 3x, moveLeft, rotate 1x
- */
 function moveUp(grid: Tile[][]): [Tile[][], number] {
   let g = grid;
   for (let i = 0; i < 3; i++) {
@@ -383,13 +367,10 @@ function moveUp(grid: Tile[][]): [Tile[][], number] {
   }
   const [tmp, score] = moveLeft(g);
   g = tmp;
-  g = rotateGrid(g); // rotate once to get back
+  g = rotateGrid(g);
   return [g, score];
 }
 
-/**
- * Move Down => rotate 1x, moveLeft, rotate 3x
- */
 function moveDown(grid: Tile[][]): [Tile[][], number] {
   let g = rotateGrid(grid);
   const [tmp, score] = moveLeft(g);
@@ -406,20 +387,23 @@ function moveDown(grid: Tile[][]): [Tile[][], number] {
  */
 function rotateGrid(src: Tile[][]): Tile[][] {
   const n = src.length;
-  const newGrid: Tile[][] = createEmptyGrid();
+  // Avoid index errors if src is unexpectedly not 4x4
+  if (n < 4) return src;
 
+  const newGrid: Tile[][] = createEmptyGrid();
   for (let r = 0; r < n; r++) {
     for (let c = 0; c < n; c++) {
-      newGrid[c][n - 1 - r].value = src[r][c].value;
-      newGrid[c][n - 1 - r].id = src[r][c].id;
+      const oldVal = src[r]?.[c]?.value ?? 0;
+      const oldId = src[r]?.[c]?.id ?? `r${r}c${c}-??`;
+      if (newGrid[c]?.[n - 1 - r]) {
+        newGrid[c]![n - 1 - r]!.value = oldVal;
+        newGrid[c]![n - 1 - r]!.id = oldId;
+      }
     }
   }
   return newGrid;
 }
 
-/**
- * getTileColor: Return the background color for a given tile value
- */
 function getTileColor(value: number): string {
   switch (value) {
     case 2:

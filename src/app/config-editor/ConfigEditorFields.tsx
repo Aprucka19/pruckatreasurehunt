@@ -47,7 +47,7 @@ export function ConfigEditorFields({
               <input
                 type="number"
                 className="border p-1 w-full"
-                value={value}
+                value={String(value)}
                 onChange={(e) => {
                   const newVal = parseFloat(e.target.value);
                   onChange(currentPath, newVal);
@@ -57,7 +57,7 @@ export function ConfigEditorFields({
               <input
                 type="text"
                 className="border p-1 w-full"
-                value={value}
+                value={String(value)}
                 onChange={(e) => {
                   onChange(currentPath, e.target.value);
                 }}
