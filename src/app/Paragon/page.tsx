@@ -281,7 +281,7 @@ export default function ParagonPage() {
         {isMobile ? (
           "Press and hold to toggle between blank, 🚩, and ?"
         ) : (
-          "Right click to toggle between blank, 🚩, and ?"
+          "Right click (or hold on mobile) to toggle between blank, 🚩, and ?"
         )}
       </p>
       
