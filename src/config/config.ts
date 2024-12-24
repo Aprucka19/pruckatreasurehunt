@@ -21,4 +21,8 @@ export const config = {
     targetScore: 2048,
     clue: "Congratulations! Your next clue is hidden in the stargazer's telescope.",
   },
+  CrosswordConfig: {
+    answer: "MATRIX",
+    clue: "Follow the white rabbit to the next location.",
+  },
 };

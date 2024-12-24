@@ -30,7 +30,11 @@ export async function initializeConfig() {
       {
         section: "Game2048Config",
         config: config.Game2048Config,
-      }
+      },
+      {
+        section: "CrosswordConfig",
+        config: config.CrosswordConfig,
+      },
     ].filter(cfg => !existingSections.has(cfg.section));
 
     if (configsToInsert.length > 0) {
@@ -98,6 +102,14 @@ export async function get2048Config() {
   const config = await getConfigBySection("Game2048Config") as typeof import("~/config/config").config.Game2048Config;
   if (!config.targetScore || !config.clue) {
     throw new Error("2048 configuration is missing required fields");
+  }
+  return config;
+}
+
+export async function getCrosswordConfig() {
+  const config = await getConfigBySection("CrosswordConfig") as typeof import("~/config/config").config.CrosswordConfig;
+  if (!config.answer || !config.clue) {
+    throw new Error("Crossword configuration is missing required fields");
   }
   return config;
 }
