@@ -107,7 +107,7 @@ export default function GameHangmanPage() {
         setWrongGuesses(newWrongGuesses);
         console.log(`Wrong guesses: ${newWrongGuesses}`);
 
-        if (newWrongGuesses >= (config?.maxWrongGuesses || 6)) {
+        if (newWrongGuesses >= (config?.maxWrongGuesses ?? 6)) {
           setGameStatus("lost");
           setConsecutiveWins(0);
           console.log("Game lost.");
@@ -124,7 +124,7 @@ export default function GameHangmanPage() {
           setConsecutiveWins((prev) => prev + 1);
           console.log(`Game won! Consecutive wins: ${consecutiveWins + 1}`);
 
-          if (consecutiveWins + 1 >= (config?.requiredWins || 3)) {
+          if (consecutiveWins + 1 >= (config?.requiredWins ?? 3)) {
             setShowClue(true);
             console.log("Required wins achieved. Fetching clue...");
             await fetchClue(selectedWord);
