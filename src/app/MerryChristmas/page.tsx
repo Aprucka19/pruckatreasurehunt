@@ -70,7 +70,7 @@ export default function MerryChristmasPage() {
       <iframe 
         src="/dino-game/index.html"
         className="w-full"
-        style={{ height: "calc(25vh)" }}
+        style={{ height: "calc(50vh)" }}
         scrolling="no"
       />
       
