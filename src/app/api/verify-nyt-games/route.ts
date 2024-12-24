@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { AstridAndOrionConfig } from "~/config/config";
+import { getAstridAndOrionConfig } from "~/server/queries";
 
 type RequestBody = {
   wordle: string;
@@ -10,24 +10,23 @@ type RequestBody = {
 export async function POST(request: Request) {
   try {
     const { wordle, purpleGroup, strandsTheme } = await request.json() as RequestBody;
-
-    const { correctWordle, correctPurpleGroup, correctStrandsTheme, clue } = AstridAndOrionConfig;
+    const config = await getAstridAndOrionConfig();
 
     const errors: string[] = [];
 
-    if (wordle.toLowerCase() !== correctWordle.toLowerCase()) {
+    if (wordle.toLowerCase() !== config.correctWordle.toLowerCase()) {
       errors.push("Wordle word");
     }
-    if (purpleGroup.toLowerCase() !== correctPurpleGroup.toLowerCase()) {
+    if (purpleGroup.toLowerCase() !== config.correctPurpleGroup.toLowerCase()) {
       errors.push("Purple Group Description");
     }
-    if (strandsTheme.toLowerCase() !== correctStrandsTheme.toLowerCase()) {
+    if (strandsTheme.toLowerCase() !== config.correctStrandsTheme.toLowerCase()) {
       errors.push("Strands Daily Theme");
     }
 
     let message;
     if (errors.length === 0) {
-      message = clue;
+      message = config.clue;
     } else if (errors.length === 1) {
       message = `${errors[0]} is incorrect.`;
     } else {

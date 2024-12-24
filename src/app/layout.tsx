@@ -1,8 +1,8 @@
 import "~/styles/globals.css";
-
 import { GeistSans } from "geist/font/sans";
 import { type Metadata } from "next";
-import Image from 'next/image';
+import { ClerkProvider, SignInButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
+import { HeaderTitle } from "~/app/_components/HeaderTitle";
 
 export const metadata: Metadata = {
   title: "Prucka Treasure Hunt 2024",
@@ -14,22 +14,30 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${GeistSans.variable}`}>
-      <body className="theme-background">
-        <div className="w-full">
-          <div className="container mx-auto py-4 flex items-center justify-center">
-            <Image src="/favicon.ico" alt="Icon" width={24} height={24} className="w-6 h-6 mr-2" />
-            <h1 className="text-center text-2xl font-bold">Prucka Treasure Hunt</h1>
-            <Image src="/favicon.ico" alt="Icon" width={24} height={24} className="w-6 h-6 ml-2" />
+    <ClerkProvider>
+      <html lang="en" className={`${GeistSans.variable}`}>
+        <body className="theme-background">
+          <div className="w-full">
+            <HeaderTitle />
           </div>
-        </div>
-        {children}
-        <div className="snowflakes" aria-hidden="true">
-          {Array.from({ length: 10 }).map((_, index) => (
-            <div key={index} className="snowflake">❄</div>
-          ))}
-        </div>
-      </body>
-    </html>
+          <SignedOut>
+            <div className="hidden">
+              <SignInButton />
+            </div>
+          </SignedOut>
+          <SignedIn>
+            <div className="hidden">
+              <UserButton />
+            </div>
+          </SignedIn>
+          {children}
+          <div className="snowflakes" aria-hidden="true">
+            {Array.from({ length: 10 }).map((_, index) => (
+              <div key={index} className="snowflake">❄</div>
+            ))}
+          </div>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }

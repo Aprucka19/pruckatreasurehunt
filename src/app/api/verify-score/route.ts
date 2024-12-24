@@ -1,14 +1,16 @@
 import { NextResponse } from 'next/server';
-import { MerryChristmasConfig } from "~/config/config";
+import { getMerryChristmasConfig } from "~/server/queries";
 
 export async function POST(request: Request) {
   try {
     const body = await request.json() as { score: number };
     const { score } = body;
     
-    if (score >= MerryChristmasConfig.requiredScore) {
+    const config = await getMerryChristmasConfig();
+    
+    if (score >= config.requiredScore) {
       return NextResponse.json({
-        message: MerryChristmasConfig.clue,
+        message: config.clue,
       });
     }
     

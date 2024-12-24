@@ -1,11 +1,12 @@
 import { NextResponse } from "next/server";
-import { ParagonConfig } from "~/config/config";
+import { getParagonConfig } from "~/server/queries";
 
 export async function POST(request: Request) {
   try {
     const { gameWon } = await request.json();
     if (gameWon) {
-      return NextResponse.json({ clue: ParagonConfig.clue });
+      const config = await getParagonConfig();
+      return NextResponse.json({ clue: config.clue });
     }
     return NextResponse.json({ error: "Game not won" }, { status: 400 });
   } catch {

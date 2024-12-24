@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
-import { ParagonConfig } from "~/config/config";
 
 type MarkState = "none" | "flag" | "question";
 
@@ -38,33 +37,30 @@ const countAdjacentBombs = (grid: Cell[][], row: number, col: number, gridSize: 
 };
 
 export default function ParagonPage() {
-  const { gridSize, numberOfBombs } = ParagonConfig.minesweeper;
+  const [config, setConfig] = useState<typeof import("~/config/config").config.ParagonConfig | null>(null);
   const [grid, setGrid] = useState<Cell[][]>([]);
   const [gameOver, setGameOver] = useState(false);
   const [gameWon, setGameWon] = useState(false);
   const [clueMessage, setClueMessage] = useState<string | null>(null);
-
   const [selectedCellForMarking, setSelectedCellForMarking] = useState<{x: number; y: number; top: number; left: number} | null>(null);
-
+  const [cellSize, setCellSize] = useState<number>(40);
+  const [isMobile, setIsMobile] = useState(false);
+  
   const longPressTimeout = useRef<NodeJS.Timeout | null>(null);
   const [touchStartInfo, setTouchStartInfo] = useState<{row: number, col: number, clientX: number, clientY: number} | null>(null);
 
-  // We will compute cellSize based on device screen
-  const [cellSize, setCellSize] = useState<number>(40); // default to 40px until computed
-
-  const [isMobile, setIsMobile] = useState(false);
-
+  // Fetch config when component mounts
   useEffect(() => {
-    const checkMobile = () => {
-      setIsMobile('ontouchstart' in window || navigator.maxTouchPoints > 0);
-    };
-    
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-    return () => window.removeEventListener('resize', checkMobile);
+    fetch('/api/config/paragon')
+      .then(res => res.json())
+      .then(data => setConfig(data))
+      .catch(err => console.error('Failed to fetch config:', err));
   }, []);
 
   const initializeGrid = useCallback(() => {
+    if (!config) return;
+    const { gridSize, numberOfBombs } = config.minesweeper;
+    
     const newGrid: Cell[][] = Array.from({ length: gridSize }, () =>
       Array.from({ length: gridSize }, () => ({
         isBomb: false,
@@ -98,7 +94,7 @@ export default function ParagonPage() {
     setGameOver(false);
     setGameWon(false);
     setClueMessage(null);
-  }, [gridSize, numberOfBombs]);
+  }, [config]);
 
   useEffect(() => {
     initializeGrid();
@@ -106,12 +102,13 @@ export default function ParagonPage() {
 
   // Compute cellSize after the component mounts (in browser)
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      const margin = 32; // reduced margin
+    if (typeof window !== "undefined" && config) {
+      const margin = 32;
       const maxCellSize = 40;
+      const gridSize = config.minesweeper.gridSize;
 
-      const widthAvailable = Math.min(window.innerWidth - margin, 600); // Added max width limit
-      const heightAvailable = Math.min(window.innerHeight - margin, 600); // Added max height limit
+      const widthAvailable = Math.min(window.innerWidth - margin, 600);
+      const heightAvailable = Math.min(window.innerHeight - margin, 600);
 
       const sizeBasedOnWidth = widthAvailable / gridSize;
       const sizeBasedOnHeight = heightAvailable / gridSize;
@@ -119,7 +116,7 @@ export default function ParagonPage() {
       const computedCellSize = Math.min(sizeBasedOnWidth, sizeBasedOnHeight, maxCellSize);
       setCellSize(computedCellSize > 0 ? computedCellSize : 5);
     }
-  }, [gridSize]);
+  }, [config]);
 
   const revealCell = (row: number, col: number) => {
     if (
@@ -149,6 +146,7 @@ export default function ParagonPage() {
   };
 
   const floodReveal = (grid: Cell[][], startRow: number, startCol: number) => {
+    const gridSize = config?.minesweeper.gridSize ?? 0;
     const directions: [number, number][] = [
       [-1, -1], [-1, 0], [-1, 1],
       [0, -1],           [0, 1],
@@ -273,6 +271,8 @@ export default function ParagonPage() {
     }
   };
 
+  if (!config) return <div>Loading...</div>;
+
   return (
     <div className="flex flex-col items-center relative p-2">
       <h1 className="text-2xl font-bold mb-2">Minesweeper</h1>
@@ -298,7 +298,7 @@ export default function ParagonPage() {
         <div 
           className="grid" 
           style={{ 
-            gridTemplateColumns: `repeat(${gridSize}, 1fr)`
+            gridTemplateColumns: `repeat(${config.minesweeper.gridSize}, 1fr)`
           }}
         >
           {grid.map((row, rowIndex) =>
