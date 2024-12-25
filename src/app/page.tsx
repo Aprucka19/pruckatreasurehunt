@@ -5,12 +5,14 @@ export default function HomePage() {
         <h1 className="text-3xl font-bold text-center mt-0 mb-4">
           Merry Christmas!
         </h1>
-        <a 
-          href="/MerryChristmas" 
-          className="px-6 py-3 bg-green-700 text-white rounded-lg hover:bg-green-800 transition-colors text-xl font-semibold"
-        >
-          Start Hunt!
-        </a>
+
+        <div className="text-center mt-8 mb-4 space-y-4">
+          <p>If you take a tumble on the snowy chutes,</p>
+          <p>And find a broken ankle in your boots,</p>
+          <p>Down below, there's a place to go,</p>
+          <p>Where mending hands will ease your woe.</p>
+        </div>
+
         <div className="flex flex-col items-center mt-4">
           <img src="/MerryXmasScene.gif" alt="Merry Christmas Scene" className="max-w-full h-auto" />
         </div>
