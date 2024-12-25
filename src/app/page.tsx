@@ -9,7 +9,7 @@ export default function HomePage() {
         <div className="text-center mt-8 mb-4 space-y-4">
           <p>If you take a tumble on the snowy chutes,</p>
           <p>And find a broken ankle in your boots,</p>
-          <p>Down below, there's a place to go,</p>
+          <p>Down below, there&apos;s a place to go,</p>
           <p>Where mending hands will ease your woe.</p>
         </div>
 
