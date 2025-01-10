@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function HomePage() {
   return (
     <main className="flex min-h-screen flex-col items-center justify-start">
@@ -7,11 +9,20 @@ export default function HomePage() {
         </h1>
 
         <div className="text-center mt-8 mb-4 space-y-4">
-          <p>If you take a tumble on the snowy chutes,</p>
-          <p>And find a broken ankle in your boots,</p>
-          <p>Down below, there&apos;s a place to go,</p>
-          <p>Where mending hands will ease your woe.</p>
+          <p>
+            Upon completing each challenge, a clue leading to a physical location is presented. 
+            In the original treasure hunt, participants had to find a QR code at that location to access the next challenge. 
+            To preserve the treasure hunt digitally, the link to the next challenge is now directly provided after solving each puzzle. 
+            Good luck!
+          </p>
         </div>
+
+        <Link 
+          href="/MerryChristmas"
+          className="mt-4 px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+        >
+          Begin Your Adventure
+        </Link>
 
         <div className="flex flex-col items-center mt-4">
           <img src="/MerryXmasScene.gif" alt="Merry Christmas Scene" className="max-w-full h-auto" />

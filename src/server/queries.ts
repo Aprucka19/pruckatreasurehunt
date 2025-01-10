@@ -137,4 +137,54 @@ export async function getSudokuConfig() {
   }
   return config;
 }
+
+export async function forceUpdateConfig() {
+  try {
+    const configsToUpdate = [
+      {
+        section: "MerryChristmasConfig",
+        config: config.MerryChristmasConfig,
+      },
+      {
+        section: "AstridAndOrionConfig",
+        config: config.AstridAndOrionConfig,
+      },
+      {
+        section: "ParagonConfig",
+        config: config.ParagonConfig,
+      },
+      {
+        section: "Game2048Config",
+        config: config.Game2048Config,
+      },
+      {
+        section: "CrosswordConfig",
+        config: config.CrosswordConfig,
+      },
+      {
+        section: "HangmanConfig",
+        config: config.HangmanConfig,
+      },
+      {
+        section: "SudokuConfig",
+        config: config.SudokuConfig,
+      },
+    ];
+
+    for (const cfg of configsToUpdate) {
+      await db
+        .update(configurations)
+        .set({ 
+          config: cfg.config,
+          updatedAt: new Date(),
+        })
+        .where(eq(configurations.section, cfg.section));
+    }
+    
+    console.log('Successfully force updated all configurations');
+  } catch (error) {
+    console.error("Error force updating configurations:", error);
+    throw error;
+  }
+}
   

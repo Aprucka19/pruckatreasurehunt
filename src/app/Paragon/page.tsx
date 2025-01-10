@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback, useRef } from "react";
+import Link from "next/link";
 
 type MarkState = "none" | "flag" | "question";
 
@@ -346,8 +347,16 @@ export default function ParagonPage() {
         </button>
       )}
       {clueMessage && (
-        <div className="mt-2 text-center p-4 bg-white rounded-lg shadow-lg w-full max-w-2xl">
-          <p className="text-2xl font-semibold">{clueMessage}</p>
+        <div className="mt-6 p-4 bg-green-200 text-green-800 rounded">
+          <p className="text-lg mb-4">{clueMessage}</p>
+          {config?.nextPage && (
+            <Link 
+              href={config.nextPage}
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              Continue to Next Challenge
+            </Link>
+          )}
         </div>
       )}
 

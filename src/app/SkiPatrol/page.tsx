@@ -3,6 +3,7 @@
 "use client";
 
 import { useEffect, useState, useCallback } from "react";
+import Link from "next/link";
 
 type Cell = {
   value: number | null; // The actual number in the cell
@@ -12,6 +13,11 @@ type Cell = {
 
 type Clue = {
   message: string;
+};
+
+type Config = {
+  clue: string;
+  nextPage: string;
 };
 
 export default function GameSudokuPage() {
@@ -138,6 +144,14 @@ export default function GameSudokuPage() {
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [mode, setMode] = useState<"guess" | "hint">("guess");
   const [clue, setClue] = useState<Clue | null>(null);
+  const [config, setConfig] = useState<Config | null>(null);
+
+  useEffect(() => {
+    fetch("/api/config/sudoku")
+      .then(res => res.json())
+      .then(data => setConfig(data))
+      .catch(err => console.error("Failed to fetch config:", err));
+  }, []);
 
   /**
    * Handles selecting a cell on the Sudoku board.
@@ -402,7 +416,15 @@ export default function GameSudokuPage() {
       {/* Messages and Reset - outside white container */}
       {clue && (
         <div className="mt-6 p-4 bg-green-200 text-green-800 rounded">
-          <p className="text-lg">{clue.message}</p>
+          <p className="text-lg mb-4">{clue.message}</p>
+          {config?.nextPage && (
+            <Link 
+              href={config.nextPage}
+              className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+            >
+              Continue to Next Challenge
+            </Link>
+          )}
         </div>
       )}
 

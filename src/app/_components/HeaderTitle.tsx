@@ -41,25 +41,25 @@ export function HeaderTitle() {
           >
             Config Editor
           </button>
+        </SignedIn>
           
-          <div className="relative group z-50">
-            <button className="px-4 py-2 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">
-              Navigation
-            </button>
-            <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-              <div className="py-1">
-                <Link href="/" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Home</Link>
-                <Link href="/Paragon" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Paragon</Link>
-                <Link href="/AstridAndOrion" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">AstridAndOrion</Link>
-                <Link href="/MerryChristmas" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">MerryChristmas</Link>
-                <Link href="/Hapland" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hapland</Link>
-                <Link href="/NeoIsTheOne" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">NeoIsTheOne</Link>
-                <Link href="/ElectricHigh" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ElectricHigh</Link>
-                <Link href="/SkiPatrol" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">SkiPatrol</Link>
-              </div>
+        <div className="relative group z-50">
+          <button className="px-4 py-2 text-sm bg-gray-500 text-white rounded hover:bg-gray-600 transition-colors">
+            Navigation
+          </button>
+          <div className="absolute left-0 mt-2 w-48 bg-white rounded-md shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+            <div className="py-1">
+              <Link href="/" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Home</Link>
+              <Link href="/Paragon" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Paragon</Link>
+              <Link href="/AstridAndOrion" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">AstridAndOrion</Link>
+              <Link href="/MerryChristmas" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">MerryChristmas</Link>
+              <Link href="/Hapland" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Hapland</Link>
+              <Link href="/NeoIsTheOne" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">NeoIsTheOne</Link>
+              <Link href="/ElectricHigh" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">ElectricHigh</Link>
+              <Link href="/SkiPatrol" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">SkiPatrol</Link>
             </div>
           </div>
-        </SignedIn>
+        </div>
       </div>
       
       <div className="flex items-center justify-center">

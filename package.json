@@ -19,7 +19,8 @@
     "format:write": "prettier --write \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mdx}\" --cache",
     "db:seed": "tsx src/server/db/seed.ts",
-    "db:setup": "pnpm db:generate && pnpm db:push && pnpm db:seed"
+    "db:setup": "pnpm db:generate && pnpm db:push && pnpm db:seed",
+    "db:force-update": "tsx src/server/db/force-update.ts"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.9.6",

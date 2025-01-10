@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 
 type ApiResponse = {
   message: string;
@@ -9,6 +10,7 @@ type ApiResponse = {
 type Config = {
   requiredScore: number;
   clue: string;
+  nextPage: string;
 };
 
 export default function MerryChristmasPage() {
@@ -46,7 +48,7 @@ export default function MerryChristmasPage() {
               
               if (response.ok) {
                 const data = await response.json() as ApiResponse;
-                setClueMessage(data.message);
+                setClueMessage(config.clue);
                 setClueReceived(true);
               }
             } catch (error) {
@@ -74,9 +76,15 @@ export default function MerryChristmasPage() {
         scrolling="no"
       />
       
-      {clueMessage && (
+      {clueMessage && config && (
         <div className="mt-4 text-center p-6 bg-white rounded-lg shadow-lg w-full max-w-2xl">
-          <p className="text-2xl font-semibold">{clueMessage}</p>
+          <p className="text-2xl font-semibold mb-4">{clueMessage}</p>
+          <Link 
+            href={config.nextPage}
+            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
+          >
+            Continue to Next Challenge
+          </Link>
         </div>
       )}
     </div>

@@ -3,11 +3,14 @@
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
+import Link from "next/link";
 
 type ConfigHangman = {
   words: string[];
   maxWrongGuesses: number;
   requiredWins: number;
+  clue: string;
+  nextPage: string;
 };
 
 type VerifyResponse = {
@@ -260,24 +263,14 @@ export default function GameHangmanPage() {
           )}
 
           {showClue && clueMessage && (
-            <div className="mt-4 p-4 bg-green-100 text-center rounded">
-              <p className="text-xl font-semibold">
-                Nice!
-              </p>
-              <p className="mt-2">{clueMessage}</p>
-              {/* Restart Button */}
-              <button
-                onClick={() => {
-                  setShowClue(false);
-                  setClueMessage(null);
-                  setConsecutiveWins(0); // Reset consecutive wins after showing clue
-                  setCompletedWords(new Set()); // Reset completed words if desired
-                  initGame(); // Start a new game
-                }}
-                className="mt-4 bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+            <div className="mt-4 p-4 bg-white text-center rounded shadow">
+              <p className="text-xl font-semibold mb-4">{clueMessage}</p>
+              <Link 
+                href={config?.nextPage ?? "#"}
+                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors"
               >
-                Restart Game
-              </button>
+                Continue to Next Challenge
+              </Link>
             </div>
           )}
 
